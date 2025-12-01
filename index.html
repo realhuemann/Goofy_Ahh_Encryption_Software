@@ -1,0 +1,118 @@
+<html>
+    <head>
+        <title>Goofy Ahh Encryption Software</title>
+        <meta charset="utf-8">
+        <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCZ4cxWFZ2fLXqCE3gUw2gkj6AJSBaR8JIeoI33IK9x7E1zt0:https://d29fhpw069ctt2.cloudfront.net/icon/image/37722/preview.svg&s" type="image/x-icon">
+    </head>
+    <body>
+    <h1>Goofy Ahh Encryption Software</h1>
+    <hr>
+
+    <div style="width: 90vw; border: none; word-wrap: break-word;">
+    <h2>Encrypt:</h2>
+    <input type="text" placeholder="enter your messege here &lt;3" id="etext"> 
+    <button type="button" id="e-button">encrypt</button>
+    <p id="e-result">Your message will go here :D</p>
+    </div>
+
+    <hr>
+
+    <div style="width: 90vw; border: none; word-wrap: break-word;">
+    <h2>Decrypt:</h2>
+    <input type="text" placeholder="enter your messege here &lt;3" id="dtext">
+    <button type="button" id="d-button">decrypt</button>
+    <p id="d-result">Your message will go here :D</p>
+    </div>
+
+    <div>
+    <button type="button" id="clear">Clear Data</button>
+    <button type="button" id="info">Show Info</button>
+    </div>
+
+    <p>©COPYRIGHT huemann 2025, all rights reserved</p>
+
+    </body>
+</html>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js" integrity="sha256-/H4YS+7aYb9kJ5OKhFYPUjSJdrtV6AeyJOtTkw6X72o=" crossorigin="anonymous"></script>
+
+<script>
+    let passcode = null
+    let hidden_passcode = localStorage.getItem("passcode")
+
+    if (hidden_passcode == null || hidden_passcode == "null") {
+        while(hidden_passcode == null || hidden_passcode == "null") {
+            hidden_passcode = prompt("pleese enter a hidden passcode, make this long and secure. you will not have to redo this")
+        }
+        while(!passcode){
+            passcode = prompt("pleese create a passcode")
+        }
+        localStorage.setItem("passcode", (CryptoJS.AES.encrypt(hidden_passcode, passcode)))
+    }
+    
+    else {
+    while(!passcode) {
+    passcode = prompt("Please enter your passcode (not hidden passcode)")
+    }
+    }
+
+    let temp = CryptoJS.AES.decrypt(hidden_passcode, passcode)
+    let password = hex2a(temp)
+    let etext = document.getElementById("etext")
+    let ebutton = document.getElementById("e-button")
+    let eresult = document.getElementById("e-result")
+    
+    ebutton.addEventListener("click", function(){
+        if (etext.value === ""){
+            alert("no message?")
+        }
+        else {
+            eresult.textContent = CryptoJS.AES.encrypt(etext.value, password)
+        }
+    })
+
+    let dtext = document.getElementById("dtext")
+    let dbutton = document.getElementById("d-button")
+    let dresult = document.getElementById("d-result")
+    let clear = document.getElementById("clear")
+    let info = document.getElementById("info")
+
+    dbutton.addEventListener("click", function(){
+        if (dtext.value === ""){
+            alert("no message?")
+        }
+        else {
+            temp = CryptoJS.AES.decrypt(dtext.value, password)
+            dresult.textContent = hex2a(temp)
+            temp = 0
+        }
+    })
+
+    clear.addEventListener("click", function(){
+        var temp2 = ""
+        temp2 = prompt("Do you really want to clear your data, if so type \"yes\"")
+        if (temp2 == "yes"){
+            localStorage.setItem("passcode", "null")
+            window.close()
+        }
+        else {
+            //pass
+        }
+    })
+
+    info.addEventListener("click", function(){
+        var temp2 = ""
+        temp2 = prompt("Do you really want to show your hidden passcode and your regular passcode, if so type \"yes\"")
+        if (temp2 == "yes"){
+            alert("hidden passcode [encrypted]: " + hidden_passcode + "hidden passcode [unencrypted]:" + password + " passcode: " + passcode)
+        }
+    })
+
+    function hex2a(hexx) {
+    var hex = hexx.toString();//force conversion
+    var str = '';
+    for (var i = 0; i < hex.length; i += 2)
+        str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+    return str;
+    }  
+</script>
